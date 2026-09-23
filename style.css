@@ -1,0 +1,62 @@
+body {
+  font-family: sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 15px;
+  line-height: 1.5;
+}
+
+h1, h2 {
+  border-bottom: 2px solid #333;
+  padding-bottom: 5px;
+}
+
+.box {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.action-panel {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.log-item {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+dialog {
+  border: 1px solid #888;
+  border-radius: 8px;
+  padding: 20px;
+  width: 320px;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+select, input[type="text"] {
+  padding: 6px;
+  font-size: 14px;
+}

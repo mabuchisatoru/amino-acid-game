@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>アミノ酸配列推測ゲーム</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>アミノ酸配列推測ゲーム</h1>
+
+  <!-- 1. 標的配列の情報 -->
+  <div class="box">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2>標的配列の情報</h2>
+      <button id="new-game-btn" style="height: 35px;">新しい問題を生成</button>
+    </div>
+    <p><strong>全残基数:</strong> <span id="target-length"></span> 残基</p>
+    <p><strong>全体のアミノ酸組成:</strong> <span id="target-composition"></span></p>
+  </div>
+
+  <!-- 2. 操作エリア -->
+  <div class="box">
+    <h2>アクション</h2>
+    <div class="action-panel">
+      <button id="open-cleave-dialog-btn">酵素処理を実行する</button>
+    </div>
+    <hr>
+    <div>
+      <h3>最終回答</h3>
+      <input type="text" id="answer-input" placeholder="例: ACAADFGYAA" style="width: 250px;">
+      <button id="submit-answer-btn">回答する</button>
+      <p id="answer-result" style="font-weight: bold; font-size: 1.1em;"></p>
+    </div>
+  </div>
+
+  <!-- 3. ヒント履歴表示エリア -->
+  <div class="box">
+    <h2>実験履歴（ヒント）</h2>
+    <div id="history-log">
+      <p style="color: #666;">まだ実験履歴はありません。</p>
+    </div>
+  </div>
+
+  <!-- ダイアログ: 酵素処理選択 -->
+  <dialog id="cleave-dialog">
+    <form method="dialog" class="dialog-form">
+      <h3>酵素処理の選択</h3>
+      
+      <label>
+        対象ペプチド:<br>
+        <select id="select-peptide"></select>
+      </label>
+
+      <label>
+        使用する酵素:<br>
+        <select id="select-enzyme">
+          <option value="trypsin">トリプシン (K, RのC切断)</option>
+          <option value="chymotrypsin">キモトリプシン (F, W, YのC切断)</option>
+          <option value="elastase">エラスターゼ (A, G, S, VのC切断)</option>
+          <option value="v8">V8プロテアーゼ (D, EのC切断)</option>
+          <option value="thermolysin">サーモリシン (F, I, M, V, W, YのN切断)</option>
+          <option value="hepsin">ヘプシン (F, L, W, YのN切断)</option>
+        </select>
+      </label>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" id="cancel-dialog-btn">キャンセル</button>
+        <button type="submit" id="confirm-cleave-btn">実行</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
