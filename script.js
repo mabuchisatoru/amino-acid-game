@@ -8,7 +8,7 @@ let experimentCount = 0;
 
 // 10〜12残基のランダムなアミノ酸配列を生成
 function generateRandomSequence() {
-  const length = Math.floor(Math.random() * 3) + 10; // 10, 11, 12のいずれか
+  const length = Math.floor(Math.random() * 3) + 10;
   let seq = "";
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * AMINO_ACIDS.length);
@@ -162,9 +162,8 @@ function simulateCleavage(seq, enzyme) {
   // 2. 「自身の中にさらにモノマーを出さずに切れる部位がある親断片」を消去する
   const finalFragments = allValidFragments.filter(subSeq => {
     const subCuts = getAllCutPositions(subSeq, enzyme);
-    if (subCuts.length === 0) return true; // 切断部位がなければそのまま残す
+    if (subCuts.length === 0) return true;
 
-    // subSeq の内部でモノマーが出ない有効な切断が1つでも可能か検証
     const subN = subCuts.length;
     let canBeCleavedFurtherWithoutMonomer = false;
 
@@ -182,14 +181,12 @@ function simulateCleavage(seq, enzyme) {
       }
       frags.push(subSeq.substring(start));
 
-      // モノマーが発生しない分解の組み合わせが存在した場合
       if (!frags.some(f => f.length === 1)) {
         canBeCleavedFurtherWithoutMonomer = true;
-        break; // 1つでもさらに分解できるパターンがあれば抜け出す
+        break;
       }
     }
 
-    // さらに分解可能なら false（消去）、これ以上分解不能なら true（残す）
     return !canBeCleavedFurtherWithoutMonomer;
   });
 
@@ -224,10 +221,8 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
     res.fragments.forEach(frag => {
       const len = frag.length;
       if (len >= 2 && len <= 3) {
-        // 2-3残基: 一次構造 (配列そのもの)
         resultHtml += `<li>【${len}残基】一次構造: <strong>${frag}</strong></li>`;
       } else if (len >= 4) {
-        // 4残基以上: 通し番号（P1, P2...）を発行して保存
         peptideCounter++;
         const pCode = `[P${peptideCounter}]`;
         const comp = getCompositionString(frag);
