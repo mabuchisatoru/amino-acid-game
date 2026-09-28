@@ -17,9 +17,9 @@ function generateRandomSequence() {
   return seq;
 }
 
-// ゲームの初期化/リセット
+// ゲームの初期化/リセット（配列固定版）
 function initGame() {
-  targetSequence = generateRandomSequence();
+  targetSequence = "FQGFKDQVTRLA"; // ★標的配列を FQGFKDQVTRLA に固定
   peptideCounter = 0;
   experimentCount = 0;
 
