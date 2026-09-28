@@ -2,71 +2,88 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>アミノ酸配列推測ゲーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>配列当てゲーム - アミノ酸配列推定パズル</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>アミノ酸配列推測ゲーム</h1>
+  <div class="container">
+    <h1>🧬 アミノ酸配列推定パズル</h1>
+    <p class="description">
+      酵素反応を利用してペプチドを切断し、得られた断片の組成や一次構造から元の12残基のアミノ酸配列を論理的に導き出してください。
+    </p>
 
-  <!-- 1. 標的配列の情報 -->
-  <div class="box">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h2>標的配列の情報</h2>
-      <button id="new-game-btn" style="height: 35px;">新しい問題を生成</button>
+    <!-- 学籍番号・氏名入力エリア -->
+    <div class="card highlight-card">
+      <h2>0. プレイヤー情報</h2>
+      <div style="margin-top: 8px;">
+        <label for="student-id-input"><strong>学籍番号・氏名 (必須):</strong></label><br>
+        <input type="text" id="student-id-input" placeholder="例: 1234567 名大 太郎" style="width: 100%; max-width: 400px; padding: 8px; margin-top: 6px; box-sizing: border-box;">
+        <p style="font-size: 0.85em; color: #666; margin-top: 4px;">※実験ログ提出時に使用します。実験を開始する前に入力してください。</p>
+      </div>
     </div>
-    <p><strong>全残基数:</strong> <span id="target-length"></span> 残基</p>
-    <p><strong>全体のアミノ酸組成:</strong> <span id="target-composition"></span></p>
+
+    <!-- 標的配列情報 -->
+    <div class="card">
+      <h2>1. 標的ペプチド [P0] の情報</h2>
+      <p><strong>全残基数:</strong> <span id="target-length">-</span> 残基</p>
+      <p><strong>全体のアミノ酸組成:</strong> <span id="target-composition">-</span></p>
+      <button id="new-game-btn" class="secondary-btn">現在の進行を破棄してやり直す</button>
+    </div>
+
+    <!-- 実験操作エリア -->
+    <div class="card">
+      <h2>2. 酵素反応実験</h2>
+      <p>所持しているペプチドを選択し、特定の酵素を作用させて切断実験を行います。</p>
+      <button id="open-cleave-dialog-btn" class="primary-btn">🧪 酵素反応を実行する</button>
+    </div>
+
+    <!-- 解答提出エリア -->
+    <div class="card">
+      <h2>3. 最終配列の解答 & ログ提出</h2>
+      <div style="margin-bottom: 12px;">
+        <label for="answer-input"><strong>推測した配列 (12残基):</strong></label><br>
+        <input type="text" id="answer-input" placeholder="例: FQGFKDQVTRLA" style="width: 100%; max-width: 400px; padding: 8px; margin-top: 6px; text-transform: uppercase; box-sizing: border-box;">
+      </div>
+      <button id="submit-answer-btn" class="success-btn">正解判定 & ログ提出</button>
+      <div id="answer-result" style="margin-top: 12px; font-size: 1.1em; font-weight: bold;"></div>
+    </div>
+
+    <!-- 実験履歴表示エリア -->
+    <div class="card">
+      <h2>📜 実験履歴ログ</h2>
+      <div id="history-log">
+        <p style="color: #666;">まだ実験履歴はありません。</p>
+      </div>
+    </div>
   </div>
 
-  <!-- 2. 操作エリア -->
-  <div class="box">
-    <h2>アクション</h2>
-    <div class="action-panel">
-      <button id="open-cleave-dialog-btn">酵素処理を実行する</button>
-    </div>
-    <hr>
-    <div>
-      <h3>最終回答</h3>
-      <input type="text" id="answer-input" placeholder="例: ACAADFGYAA" style="width: 250px;">
-      <button id="submit-answer-btn">回答する</button>
-      <p id="answer-result" style="font-weight: bold; font-size: 1.1em;"></p>
-    </div>
-  </div>
-
-  <!-- 3. ヒント履歴表示エリア -->
-  <div class="box">
-    <h2>実験履歴（ヒント）</h2>
-    <div id="history-log">
-      <p style="color: #666;">まだ実験履歴はありません。</p>
-    </div>
-  </div>
-
-  <!-- ダイアログ: 酵素処理選択 -->
+  <!-- 酵素選択ダイアログ (モーダル) -->
   <dialog id="cleave-dialog">
-    <form method="dialog" class="dialog-form">
-      <h3>酵素処理の選択</h3>
+    <form method="dialog">
+      <h3>🧪 酵素反応の設定</h3>
       
-      <label>
-        対象ペプチド:<br>
-        <select id="select-peptide"></select>
-      </label>
+      <div style="margin-bottom: 15px;">
+        <label for="select-peptide"><strong>対象ペプチド:</strong></label><br>
+        <select id="select-peptide" style="width: 100%; padding: 8px; margin-top: 5px;"></select>
+      </div>
 
-      <label>
-        使用する酵素:<br>
-        <select id="select-enzyme">
-          <option value="trypsin">トリプシン (K, RのC切断)</option>
-          <option value="chymotrypsin">キモトリプシン (F, W, YのC切断)</option>
-          <option value="elastase">エラスターゼ (A, G, S, VのC切断)</option>
-          <option value="v8">V8プロテアーゼ (D, EのC切断)</option>
-          <option value="thermolysin">サーモリシン (F, I, M, V, W, YのN切断)</option>
-          <option value="hepsin">ヘプシン (F, L, W, YのN切断)</option>
+      <div style="margin-bottom: 20px;">
+        <label for="select-enzyme"><strong>使用する酵素:</strong></label><br>
+        <select id="select-enzyme" style="width: 100%; padding: 8px; margin-top: 5px;">
+          <option value="trypsin">トリプシン (Trypsin: K, R のC切断)</option>
+          <option value="chymotrypsin">キモトリプシン (Chymotrypsin: F, W, Y のC切断)</option>
+          <option value="elastase">エラスターゼ (Elastase: A, G, S, V のC切断)</option>
+          <option value="v8">V8プロテアーゼ (Staphylococcus V8: D, E のC切断)</option>
+          <option value="thermolysin">サーモライシン (Thermolysin: F, I, M, V, W, Y のN切断)</option>
+          <option value="hepsin">ヘプシン (Hepsin: F, L, W, Y のN切断)</option>
         </select>
-      </label>
+      </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" id="cancel-dialog-btn">キャンセル</button>
-        <button type="submit" id="confirm-cleave-btn">実行</button>
+      <div style="text-align: right;">
+        <button id="cancel-dialog-btn" type="button" class="secondary-btn">キャンセル</button>
+        <button id="confirm-cleave-btn" type="submit" class="primary-btn">実験実行</button>
       </div>
     </form>
   </dialog>
