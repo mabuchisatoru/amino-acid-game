@@ -43,12 +43,6 @@ function getCompositionString(seq) {
 // 初期表示処理
 document.addEventListener("DOMContentLoaded", () => {
   initGame();
-
-  document.getElementById("new-game-btn").addEventListener("click", () => {
-    if (confirm("現在の進行状態を破棄して、最初からやり直しますか？")) {
-      initGame();
-    }
-  });
 });
 
 // モーダルダイアログ制御
