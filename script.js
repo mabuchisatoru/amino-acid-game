@@ -6,6 +6,7 @@ let peptideCounter = 0;
 let availablePeptides = [];
 let experimentCount = 0;
 let actionLogs = []; // 実験ログ保持用
+let wrongAnswerCount = 0; // 誤答カウント用
 
 // --- Google フォームの設定 ---
 const FORM_URL = "https://docs.google.com/forms/d/1CjkXITqSBwcBjhyIkuNuf4_eqqPed7NghJPAoAcAx6I/formResponse";
@@ -18,11 +19,18 @@ function initGame() {
   targetSequence = "FQGFKDQVTRLA"; // 標的配列（12残基固定）
   peptideCounter = 0;
   experimentCount = 0;
+  wrongAnswerCount = 0;
   actionLogs = [];
 
   availablePeptides = [
     { id: "p_0", code: "[P0]", sequence: targetSequence, label: `[P0] 初期標的ペプチド (${targetSequence.length}残基)` }
   ];
+
+  // ボタンの無効化を解除
+  const submitBtn = document.getElementById("submit-answer-btn");
+  const cleaveBtn = document.getElementById("open-cleave-dialog-btn");
+  if (submitBtn) submitBtn.disabled = false;
+  if (cleaveBtn) cleaveBtn.disabled = false;
 
   document.getElementById("target-length").textContent = targetSequence.length;
   document.getElementById("target-composition").textContent = getCompositionString(targetSequence);
@@ -277,7 +285,7 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   }
 });
 
-// 解答判定 & 正解ログ送信
+// 解答判定 & ログ送信 (誤答ログ送信 ＋ 最大2回制限)
 document.getElementById("submit-answer-btn").addEventListener("click", () => {
   const studentIdInput = document.getElementById("student-id-input");
   const studentId = studentIdInput ? studentIdInput.value.trim() : "";
@@ -295,16 +303,39 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
     return;
   }
 
-  const logSummary = "【正解クリア】 " + actionLogs.join(" | ");
-
+  // 正解判定
   if (userAns === targetSequence) {
+    // 【正解の場合】
     resElem.style.color = "green";
     resElem.innerHTML = `🎉 正解です！見事に配列を特定しました！<br>（総実験回数: <strong>${experimentCount}回</strong>）<br><small style="color:#555;">※実験ログをTAへ自動送信しました。</small>`;
     
-    // 正解ログ送信
+    const logSummary = "【正解クリア】 " + actionLogs.join(" | ");
     sendLogToGoogleForm(studentId, experimentCount, logSummary);
+
+    // ボタンを無効化（二重送信防止）
+    document.getElementById("submit-answer-btn").disabled = true;
+    document.getElementById("open-cleave-dialog-btn").disabled = true;
+
   } else {
-    resElem.style.color = "red";
-    resElem.textContent = "❌ 不正解です。もう一度推測してみてください。";
+    // 【不正解の場合】
+    wrongAnswerCount++;
+
+    // 誤答ログをGoogleフォームへ送信（何を答えて間違えたかを記録）
+    const failAnsSummary = `【誤答 #${wrongAnswerCount}回目: 推測配列[${userAns}]】 ` + actionLogs.join(" | ");
+    sendLogToGoogleForm(studentId, experimentCount, failAnsSummary);
+
+    if (wrongAnswerCount === 1) {
+      // 1回目の誤答
+      resElem.style.color = "red";
+      resElem.innerHTML = `❌ 不正解です。誤答ログを送信しました。<br><strong>※回答チャンスは残り【1回】です！</strong>もう一度よく確認して解答してください。`;
+    } else {
+      // 2回目の誤答（上限到達）
+      resElem.style.color = "red";
+      resElem.innerHTML = `❌ 2回続けて不正解となりました。<br>無計画な総当たりを防ぐため、回答権がロックされました。<br>最初からやり直す場合はページを再読み込み（F5）してください。`;
+
+      // 画面操作をロック
+      document.getElementById("submit-answer-btn").disabled = true;
+      document.getElementById("open-cleave-dialog-btn").disabled = true;
+    }
   }
 });
