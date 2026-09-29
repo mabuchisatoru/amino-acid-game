@@ -7,6 +7,7 @@ let availablePeptides = [];
 let experimentCount = 0;
 let actionLogs = []; // 実験ログ保持用
 let wrongAnswerCount = 0; // 誤答カウント用
+let executedExperiments = []; // 確定判定用の構造化実験データ
 
 // --- Google フォームの設定 ---
 const FORM_URL = "https://docs.google.com/forms/d/1CjkXITqSBwcBjhyIkuNuf4_eqqPed7NghJPAoAcAx6I/formResponse";
@@ -16,11 +17,12 @@ const ENTRY_LOG_DETAIL = "entry.1640624802"; // 質問3: 実験ログ詳細
 
 // ゲームの初期化/リセット
 function initGame() {
-  targetSequence = "FQGFKDQVTRLA"; // 標的配列（12残基固定）
+  targetSequence = "ACAADFGYAA"; // 標的配列（固定）
   peptideCounter = 0;
   experimentCount = 0;
   wrongAnswerCount = 0;
   actionLogs = [];
+  executedExperiments = [];
 
   availablePeptides = [
     { id: "p_0", code: "[P0]", sequence: targetSequence, label: `[P0] 初期標的ペプチド (${targetSequence.length}残基)` }
@@ -201,6 +203,67 @@ function sendLogToGoogleForm(studentId, totalCount, logDetails) {
   });
 }
 
+// --- 確定判定アルゴリズム (全探索フィルター) ---
+function getPossibleCandidatesCount(targetSeq, history) {
+  // アミノ酸の重複順列を生成（例: A:5, C:1, D:1, F:1, G:1, Y:1）
+  const charCounts = {};
+  for (const c of targetSeq) charCounts[c] = (charCounts[c] || 0) + 1;
+
+  const candidates = [];
+  function permute(current, remaining) {
+    if (current.length === targetSeq.length) {
+      candidates.push(current);
+      return;
+    }
+    for (const char in remaining) {
+      if (remaining[char] > 0) {
+        remaining[char]--;
+        permute(current + char, remaining);
+        remaining[char]++;
+      }
+    }
+  }
+  permute("", charCounts);
+
+  // これまでの全実験結果と整合するかフィルター
+  let validCount = 0;
+  for (const cand of candidates) {
+    let isValid = true;
+
+    for (const exp of history) {
+      // 親ペプチドが対象候補内に部分文字列として存在するか
+      if (!cand.includes(exp.parentSeq)) {
+        isValid = false;
+        break;
+      }
+
+      // シミュレーション実行して得られる断片の一致を確認
+      const res = simulateCleavage(exp.parentSeq, exp.enzyme);
+      const actualRes = simulateCleavage(exp.parentSeqActual, exp.enzyme); // 実際の元データでの結果
+
+      if (res.success !== actualRes.success) {
+        isValid = false;
+        break;
+      }
+
+      if (res.success) {
+        const resFrags = res.fragments.map(f => getCompositionString(f)).sort().join("|");
+        const actualFrags = actualRes.fragments.map(f => getCompositionString(f)).sort().join("|");
+        if (resFrags !== actualFrags) {
+          isValid = false;
+          break;
+        }
+      }
+    }
+
+    if (isValid) {
+      validCount++;
+    }
+  }
+
+  return validCount;
+}
+
 // 実験実行イベント
 document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   e.preventDefault();
@@ -217,6 +280,13 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
 
   experimentCount++;
   const res = simulateCleavage(targetObj.sequence, enzyme);
+
+  // 確定判定用データ蓄積
+  executedExperiments.push({
+    parentSeq: targetObj.sequence,
+    parentSeqActual: targetObj.sequence,
+    enzyme: enzyme
+  });
 
   let resultHtml = "";
   let logText = `[実験#${experimentCount}] 対象:${targetObj.code} / 酵素:${enzymeName} -> `;
@@ -285,7 +355,7 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   }
 });
 
-// 解答判定 & ログ送信 (誤答ログ送信 ＋ 最大2回制限)
+// 解答判定 & ログ送信 (確定判定ロジック ＋ 誤答ログ ＋ 最大2回制限)
 document.getElementById("submit-answer-btn").addEventListener("click", () => {
   const studentIdInput = document.getElementById("student-id-input");
   const studentId = studentIdInput ? studentIdInput.value.trim() : "";
@@ -303,11 +373,21 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
     return;
   }
 
-  // 正解判定
+  // 正解文字列自体が合っているかチェック
   if (userAns === targetSequence) {
-    // 【正解の場合】
+    // ★ 確定判定チェック：実験結果から配列が一意に絞り込めているか？
+    const candidateCount = getPossibleCandidatesCount(targetSequence, executedExperiments);
+
+    if (candidateCount > 1) {
+      // ヤマ勘・情報不足の場合
+      resElem.style.color = "orange";
+      resElem.innerHTML = `⚠️ <strong>正解の配列ですが、まだ実験データが不足しています！</strong><br>現在の実験結果からは、論理的に可能な配列の候補がまだ <strong>${candidateCount} パターン</strong> 残っています。<br>勘で当てずに、配列を1つに確定できる追加の実験を行ってください。`;
+      return; // 正解処理を行わずリターン
+    }
+
+    // 【確定＆正解の場合】
     resElem.style.color = "green";
-    resElem.innerHTML = `🎉 正解です！見事に配列を特定しました！<br>（総実験回数: <strong>${experimentCount}回</strong>）<br><small style="color:#555;">※実験ログをTAへ自動送信しました。</small>`;
+    resElem.innerHTML = `🎉 正解です！見事に配列を論理的に特定しました！<br>（総実験回数: <strong>${experimentCount}回</strong>）<br><small style="color:#555;">※実験ログをTAへ自動送信しました。</small>`;
     
     const logSummary = "【正解クリア】 " + actionLogs.join(" | ");
     sendLogToGoogleForm(studentId, experimentCount, logSummary);
@@ -320,7 +400,7 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
     // 【不正解の場合】
     wrongAnswerCount++;
 
-    // 誤答ログをGoogleフォームへ送信（何を答えて間違えたかを記録）
+    // 誤答ログをGoogleフォームへ送信
     const failAnsSummary = `【誤答 #${wrongAnswerCount}回目: 推測配列[${userAns}]】 ` + actionLogs.join(" | ");
     sendLogToGoogleForm(studentId, experimentCount, failAnsSummary);
 
