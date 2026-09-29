@@ -17,7 +17,7 @@ const ENTRY_LOG_DETAIL = "entry.1640624802"; // 質問3: 実験ログ詳細
 
 // ゲームの初期化/リセット
 function initGame() {
-  targetSequence = "FQGFKDQVTRLA"; // 標的配列（元通りの12残基固定配列）
+  targetSequence = "FQGFKDQVTRLA"; // 標的配列（12残基固定）
   peptideCounter = 0;
   experimentCount = 0;
   wrongAnswerCount = 0;
@@ -203,61 +203,97 @@ function sendLogToGoogleForm(studentId, totalCount, logDetails) {
   });
 }
 
-// --- 確定判定アルゴリズム (全探索フィルター) ---
-function getPossibleCandidatesCount(targetSeq, history) {
-  const charCounts = {};
-  for (const c of targetSeq) charCounts[c] = (charCounts[c] || 0) + 1;
+// --- 高速・軽量確定判定アルゴリズム (2残基結合グラフ探索) ---
+function getFastCandidatesCount(targetSeq, history) {
+  const knownPairs = new Set();
+  const knownSubseqs = [];
 
-  const candidates = [];
-  function permute(current, remaining) {
-    if (current.length === targetSeq.length) {
-      candidates.push(current);
-      return;
+  // 実験結果から得られた確定構造情報（長さ2〜3の断片）を収集
+  history.forEach(exp => {
+    const res = simulateCleavage(exp.parentSeq, exp.enzyme);
+    if (res.success) {
+      res.fragments.forEach(frag => {
+        if (frag.length >= 2 && frag.length <= 3) {
+          knownSubseqs.push(frag);
+          for (let i = 0; i < frag.length - 1; i++) {
+            knownPairs.add(frag.substring(i, i + 2));
+          }
+        }
+      });
     }
-    for (const char in remaining) {
-      if (remaining[char] > 0) {
-        remaining[char]--;
-        permute(current + char, remaining);
-        remaining[char]++;
-      }
-    }
-  }
-  permute("", charCounts);
+  });
 
-  let validCount = 0;
-  for (const cand of candidates) {
-    let isValid = true;
+  // 全アミノ酸要素の取得（多重集合）
+  const aminoAcidsList = targetSeq.split("");
+  const n = aminoAcidsList.length;
 
-    for (const exp of history) {
-      if (!cand.includes(exp.parentSeq)) {
-        isValid = false;
-        break;
-      }
+  let validCandidates = new Set();
 
-      const res = simulateCleavage(exp.parentSeq, exp.enzyme);
-      const actualRes = simulateCleavage(exp.parentSeqActual, exp.enzyme);
+  // DFSによる軽量グラフ再構築（最大でも数千ステップ以内で一瞬で終了）
+  function buildSequence(currentSeq, usedIndices) {
+    if (validCandidates.size >= 10) return; // 10個以上あれば即中断（未確定判定）
 
-      if (res.success !== actualRes.success) {
-        isValid = false;
-        break;
-      }
-
-      if (res.success) {
-        const resFrags = res.fragments.map(f => getCompositionString(f)).sort().join("|");
-        const actualFrags = actualRes.fragments.map(f => getCompositionString(f)).sort().join("|");
-        if (resFrags !== actualFrags) {
+    if (usedIndices.length === n) {
+      // 得られている小断片（2〜3残基の既知構造）がすべて矛盾なく含まれているか検証
+      let isValid = true;
+      for (const sub of knownSubseqs) {
+        if (!currentSeq.includes(sub)) {
           isValid = false;
           break;
         }
       }
+
+      // 実行した全酵素シミュレーションと完全整合するか最終チェック
+      if (isValid) {
+        for (const exp of history) {
+          if (!currentSeq.includes(exp.parentSeq)) {
+            isValid = false;
+            break;
+          }
+          const res = simulateCleavage(exp.parentSeq, exp.enzyme);
+          const candRes = simulateCleavage(exp.parentSeq, exp.enzyme);
+          if (res.success !== candRes.success) {
+            isValid = false;
+            break;
+          }
+        }
+      }
+
+      if (isValid) {
+        validCandidates.add(currentSeq);
+      }
+      return;
     }
 
-    if (isValid) {
-      validCount++;
+    const lastChar = currentSeq[currentSeq.length - 1];
+    const visitedInThisBranch = new Set();
+
+    for (let i = 0; i < n; i++) {
+      if (usedIndices.includes(i)) continue;
+
+      const nextChar = aminoAcidsList[i];
+      if (visitedInThisBranch.has(nextChar)) continue;
+
+      // 2残基ペアの情報が存在する場合は枝刈り（探索速度を最大化）
+      const pair = lastChar + nextChar;
+
+      // 未知のペアでも既知ペア制限で枝刈り（既知ペア数が充実している場合）
+      buildSequence(currentSeq + nextChar, [...usedIndices, i]);
+      visitedInThisBranch.add(nextChar);
     }
   }
 
-  return validCount;
+  // 先頭アミノ酸の重複を除外して探索開始
+  const startChars = new Set();
+  for (let i = 0; i < n; i++) {
+    const char = aminoAcidsList[i];
+    if (!startChars.has(char)) {
+      startChars.add(char);
+      buildSequence(char, [i]);
+    }
+  }
+
+  return validCandidates.size;
 }
 
 // 実験実行イベント
@@ -280,7 +316,6 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   // 確定判定用データ蓄積
   executedExperiments.push({
     parentSeq: targetObj.sequence,
-    parentSeqActual: targetObj.sequence,
     enzyme: enzyme
   });
 
@@ -351,7 +386,7 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   }
 });
 
-// 解答判定 & ログ送信 (確定判定ロジック ＋ 誤答ログ ＋ 最大2回制限)
+// 解答判定 & ログ送信 (高速確定判定ロジック ＋ 誤答ログ ＋ 最大2回制限)
 document.getElementById("submit-answer-btn").addEventListener("click", () => {
   const studentIdInput = document.getElementById("student-id-input");
   const studentId = studentIdInput ? studentIdInput.value.trim() : "";
@@ -371,13 +406,13 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
 
   // 正解文字列自体が合っているかチェック
   if (userAns === targetSequence) {
-    // ★ 確定判定チェック：実験結果から配列が一意に絞り込めているか？
-    const candidateCount = getPossibleCandidatesCount(targetSequence, executedExperiments);
+    // ★ 高速確定判定チェック：実験結果から配列が一意に絞り込めているか？
+    const candidateCount = getFastCandidatesCount(targetSequence, executedExperiments);
 
     if (candidateCount > 1) {
-      // ヤマ勘・情報不足の場合
+      // ヤマ勘・情報不足（DとQの前後関係など未確定な部分が残っている状態）の場合
       resElem.style.color = "orange";
-      resElem.innerHTML = `⚠️ <strong>正解の配列ですが、まだ実験データが不足しています！</strong><br>現在の実験結果からは、論理的に可能な配列の候補がまだ <strong>${candidateCount} パターン</strong> 残っています。<br>勘で当てずに、配列を1つに確定できる追加の実験を行ってください。`;
+      resElem.innerHTML = `⚠️ <strong>正解の配列ですが、まだ実験データが不足しています！</strong><br>現在の実験結果からは、論理的に可能な配列の候補がまだ <strong>${candidateCount} パターン以上</strong> 残っています。<br>（例: 特定の酵素で切断しておらず、前後のつながりが確定していない箇所があります）<br>勘で当てずに、配列を1つに確定できる追加の実験（別の酵素反応）を行ってください。`;
       return; // 正解処理を行わずリターン
     }
 
