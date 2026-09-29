@@ -17,7 +17,7 @@ const ENTRY_LOG_DETAIL = "entry.1640624802"; // 質問3: 実験ログ詳細
 
 // ゲームの初期化/リセット
 function initGame() {
-  targetSequence = "ACAADFGYAA"; // 標的配列（固定）
+  targetSequence = "FQGFKDQVTRLA"; // 標的配列（元通りの12残基固定配列）
   peptideCounter = 0;
   experimentCount = 0;
   wrongAnswerCount = 0;
@@ -205,7 +205,6 @@ function sendLogToGoogleForm(studentId, totalCount, logDetails) {
 
 // --- 確定判定アルゴリズム (全探索フィルター) ---
 function getPossibleCandidatesCount(targetSeq, history) {
-  // アミノ酸の重複順列を生成（例: A:5, C:1, D:1, F:1, G:1, Y:1）
   const charCounts = {};
   for (const c of targetSeq) charCounts[c] = (charCounts[c] || 0) + 1;
 
@@ -225,21 +224,18 @@ function getPossibleCandidatesCount(targetSeq, history) {
   }
   permute("", charCounts);
 
-  // これまでの全実験結果と整合するかフィルター
   let validCount = 0;
   for (const cand of candidates) {
     let isValid = true;
 
     for (const exp of history) {
-      // 親ペプチドが対象候補内に部分文字列として存在するか
       if (!cand.includes(exp.parentSeq)) {
         isValid = false;
         break;
       }
 
-      // シミュレーション実行して得られる断片の一致を確認
       const res = simulateCleavage(exp.parentSeq, exp.enzyme);
-      const actualRes = simulateCleavage(exp.parentSeqActual, exp.enzyme); // 実際の元データでの結果
+      const actualRes = simulateCleavage(exp.parentSeqActual, exp.enzyme);
 
       if (res.success !== actualRes.success) {
         isValid = false;
