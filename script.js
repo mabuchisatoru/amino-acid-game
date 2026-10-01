@@ -10,7 +10,7 @@ let wrongAnswerCount = 0; // 誤答カウント用
 
 // --- Google フォームの設定 ---
 const FORM_URL = "https://docs.google.com/forms/d/1CjkXITqSBwcBjhyIkuNuf4_eqqPed7NghJPAoAcAx6I/formResponse";
-const ENTRY_STUDENT_ID = "entry.864028327";  // 質問1: 学籍番号・氏名
+const ENTRY_STUDENT_ID = "entry.864028327";  // 質問1: 班番号・代表者氏名
 const ENTRY_COUNT      = "entry.1441535192"; // 質問2: 総実験回数
 const ENTRY_LOG_DETAIL = "entry.1640624802"; // 質問3: 実験ログ詳細
 
@@ -32,8 +32,15 @@ function initGame() {
   if (submitBtn) submitBtn.disabled = false;
   if (cleaveBtn) cleaveBtn.disabled = false;
 
+  const targetCompStr = getCompositionString(targetSequence);
+
   document.getElementById("target-length").textContent = targetSequence.length;
-  document.getElementById("target-composition").textContent = getCompositionString(targetSequence);
+  document.getElementById("target-composition").textContent = targetCompStr;
+  
+  // モーダル内のP0組成常時表示エリアにも反映
+  const modalCompElem = document.getElementById("modal-p0-composition");
+  if (modalCompElem) modalCompElem.textContent = targetCompStr;
+
   document.getElementById("history-log").innerHTML = '<p style="color: #666;">まだ実験履歴はありません。</p>';
   document.getElementById("answer-input").value = "";
   document.getElementById("answer-result").textContent = "";
@@ -62,7 +69,7 @@ const selectPeptide = document.getElementById("select-peptide");
 openDialogBtn.addEventListener("click", () => {
   const studentIdInput = document.getElementById("student-id-input");
   if (!studentIdInput || !studentIdInput.value.trim()) {
-    alert("実験を開始する前に、まず「学籍番号・氏名」を入力してください。");
+    alert("実験を開始する前に、まず「班番号・代表者氏名」を入力してください。");
     if (studentIdInput) studentIdInput.focus();
     return;
   }
@@ -221,7 +228,7 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   let logText = `[実験#${experimentCount}] 対象:${targetObj.code} / 酵素:${enzymeName} -> `;
 
   if (!res.success) {
-    resultHtml = `<p><strong>結果:</strong> 切断できなかった</p>`;
+    resultHtml = `<p><strong>結果:</strong> 切断できなかった</p><p style="font-size:0.85em; color:#d35400;">💡「切断不能」という結果も重要な手がかりです！なぜ切れないのか酵素の認識部位を班員と再確認してみましょう。</p>`;
     logText += "切断不可";
   } else {
     resultHtml = `<p><strong>結果:</strong> 以下の断片が得られた</p><ul>`;
@@ -254,6 +261,14 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
 
   actionLogs.push(logText);
 
+  // アドバイス表示の更新（回数に応じてTA相談を促進）
+  const adviceElem = document.getElementById("general-advice");
+  if (adviceElem) {
+    if (experimentCount >= 7) {
+      adviceElem.innerHTML = `💬 <strong>実験回数が残り少なくなってきました（現在: ${experimentCount}/10回）:</strong> 無計画な酵素反応は避け、一度紙とペンで現在確定している部位を整理してみましょう。迷ったら遠慮なくTAにヒントを求めてみてください！`;
+    }
+  }
+
   const logBox = document.getElementById("history-log");
   if (experimentCount === 1) logBox.innerHTML = "";
 
@@ -271,7 +286,7 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
 
   // ★ 10回上限チェック（過剰ガチャ対策）
   if (experimentCount >= 10) {
-    alert("【実験回数上限】実験回数が10回に達しました。\n無計画な実験を防ぐため、一度リセットします。\n※これまでの失敗ログをTAへ送信しました。手元で解法を整理してから再挑戦してください。");
+    alert("【実験回数上限】実験回数が10回に達しました。\n無計画な実験を防ぐため、一度リセットします。\n※これまでの失敗ログをTAへ送信しました。手元で解法や論理を整理してから再挑戦してください！");
     
     const failLogSummary = "【10回上限到達により失敗】 " + actionLogs.join(" | ");
     sendLogToGoogleForm(studentId, experimentCount, failLogSummary);
@@ -280,7 +295,7 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   }
 });
 
-// 解答判定 & ログ送信 (誤答ペナルティ +2 加算 ＆ 回答最大2回制限)
+// 解答判定 & ログ送信 (誤答ペナルティ +2 加算 ＆ 回答最大2回制限 ＆ TA相談誘導)
 document.getElementById("submit-answer-btn").addEventListener("click", () => {
   const studentIdInput = document.getElementById("student-id-input");
   const studentId = studentIdInput ? studentIdInput.value.trim() : "";
@@ -288,7 +303,7 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
   const resElem = document.getElementById("answer-result");
 
   if (!studentId) {
-    alert("学籍番号・氏名を入力してください。");
+    alert("班番号・代表者氏名を入力してください。");
     if (studentIdInput) studentIdInput.focus();
     return;
   }
@@ -301,7 +316,7 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
   // 正解判定
   if (userAns === targetSequence) {
     resElem.style.color = "green";
-    resElem.innerHTML = `🎉 正解です！見事に配列を特定しました！<br>（総実験回数: <strong>${experimentCount}回</strong>）<br><small style="color:#555;">※実験ログをTAへ自動送信しました。</small>`;
+    resElem.innerHTML = `🎉 正解です！見事に配列を論理的に特定しました！<br>（総実験回数: <strong>${experimentCount}回</strong>）<br><small style="color:#555;">※実験ログをTAへ自動送信しました。</small>`;
     
     const logSummary = "【正解クリア】 " + actionLogs.join(" | ");
     sendLogToGoogleForm(studentId, experimentCount, logSummary);
@@ -321,7 +336,7 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
 
     if (wrongAnswerCount === 1) {
       resElem.style.color = "red";
-      resElem.innerHTML = `❌ 不正解です。ペナルティとして<strong>実験回数が +2 加算</strong>されました（現在の総実験回数: <strong>${experimentCount}回</strong>）。<br>誤答ログを送信しました。<strong>※回答チャンスは残り【1回】です！</strong>手元でよく確認して解答してください。`;
+      resElem.innerHTML = `❌ 不正解です。ペナルティとして<strong>実験回数が +2 加算</strong>されました（現在の総実験回数: <strong>${experimentCount}回</strong>）。<br>誤答ログを送信しました。<br>⚠️ <strong>回答チャンスは残り【1回】です！</strong>ヤマ勘で押さず、一度班員やTAと推論プロセスをダブルチェックしてから最終回答してください。`;
 
       // ★ ペナルティ加算によって10回上限を超過・到達した場合の自動リセット
       if (experimentCount >= 10) {
