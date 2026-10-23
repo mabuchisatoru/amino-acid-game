@@ -1,1 +1,501 @@
-const _0x577797=_0x1230;(function(_0x28f0b1,_0x262ff8){const _0x21e2d=_0x1230,_0x1ef8f0=_0x28f0b1();while(!![]){try{const _0x390d24=-parseInt(_0x21e2d(0xcc))/0x1*(-parseInt(_0x21e2d(0xd9))/0x2)+-parseInt(_0x21e2d(0x115))/0x3+parseInt(_0x21e2d(0xdd))/0x4*(parseInt(_0x21e2d(0xf0))/0x5)+parseInt(_0x21e2d(0xd7))/0x6+parseInt(_0x21e2d(0x120))/0x7+-parseInt(_0x21e2d(0xe6))/0x8*(parseInt(_0x21e2d(0x136))/0x9)+-parseInt(_0x21e2d(0x138))/0xa;if(_0x390d24===_0x262ff8)break;else _0x1ef8f0['push'](_0x1ef8f0['shift']());}catch(_0x50cb03){_0x1ef8f0['push'](_0x1ef8f0['shift']());}}}(_0x9168,0xb8deb));const AMINO_ACIDS=['A','C','D','E','F','G','H','I','K','L','M','N','Q','R','S','T','V','W','Y'];let targetSequence='',peptideCounter=0x0,availablePeptides=[],experimentCount=0x0,actionLogs=[],wrongAnswerCount=0x0;const FORM_URL='https://docs.google.com/forms/d/1CjkXITqSBwcBjhyIkuNuf4_eqqPed7NghJPAoAcAx6I/formResponse',ENTRY_STUDENT_ID=_0x577797(0xe1),ENTRY_COUNT=_0x577797(0xc8),ENTRY_LOG_DETAIL='entry.1640624802';function initGame(){const _0x46d715=_0x577797;targetSequence=_0x46d715(0x106),peptideCounter=0x0,experimentCount=0x0,wrongAnswerCount=0x0,actionLogs=[],availablePeptides=[{'id':'p_0','code':_0x46d715(0x105),'sequence':targetSequence,'label':_0x46d715(0x12b)+targetSequence['length']+_0x46d715(0xfe)}];const _0x406220=document['getElementById'](_0x46d715(0x139)),_0x1acadf=document[_0x46d715(0xff)]('open-cleave-dialog-btn');if(_0x406220)_0x406220[_0x46d715(0xca)]=![];if(_0x1acadf)_0x1acadf['disabled']=![];const _0x589fa2=getCompositionString(targetSequence);document[_0x46d715(0xff)](_0x46d715(0xf5))[_0x46d715(0xfb)]=targetSequence[_0x46d715(0x132)],document[_0x46d715(0xff)](_0x46d715(0xe8))[_0x46d715(0xfb)]=_0x589fa2;const _0x125fb1=document[_0x46d715(0xff)](_0x46d715(0xf2));if(_0x125fb1)_0x125fb1['textContent']=_0x589fa2;document['getElementById'](_0x46d715(0xd1))['innerHTML']='<p\x20style=\x22color:\x20#666;\x22>まだ実験履歴はありません。</p>',document[_0x46d715(0xff)](_0x46d715(0x11e))[_0x46d715(0x129)]='',document[_0x46d715(0xff)]('answer-result')['textContent']='';}function getCompositionString(_0xbc452e){const _0xd14a77=_0x577797,_0x575ded={};for(const _0xaab5c2 of _0xbc452e){_0x575ded[_0xaab5c2]=(_0x575ded[_0xaab5c2]||0x0)+0x1;}return Object[_0xd14a77(0xef)](_0x575ded)[_0xd14a77(0x100)]()[_0xd14a77(0x133)](_0x157198=>_0x157198+':'+_0x575ded[_0x157198])['join'](',\x20');}document['addEventListener'](_0x577797(0x125),()=>{initGame();});function _0x1230(_0x78298b,_0x624ef5){_0x78298b=_0x78298b-0xc6;const _0x91683d=_0x9168();let _0x1230ab=_0x91683d[_0x78298b];return _0x1230ab;}const dialog=document[_0x577797(0xff)]('cleave-dialog'),openDialogBtn=document[_0x577797(0xff)](_0x577797(0xdc)),cancelDialogBtn=document[_0x577797(0xff)](_0x577797(0xe9)),selectPeptide=document['getElementById'](_0x577797(0x131));openDialogBtn[_0x577797(0x10a)](_0x577797(0xfa),()=>{const _0x5d22ba=_0x577797,_0x15dfa2=document['getElementById'](_0x5d22ba(0x13a));if(!_0x15dfa2||!_0x15dfa2[_0x5d22ba(0x129)][_0x5d22ba(0x118)]()){alert('実験を開始する前に、まず「班番号・代表者氏名」を入力してください。');if(_0x15dfa2)_0x15dfa2['focus']();return;}selectPeptide['innerHTML']='',availablePeptides[_0x5d22ba(0x11f)](_0x25ef58=>{const _0x35a666=_0x5d22ba,_0x29b3e9=document[_0x35a666(0x114)](_0x35a666(0x12e));_0x29b3e9[_0x35a666(0x129)]=_0x25ef58['id'],_0x29b3e9[_0x35a666(0xfb)]=_0x25ef58['label'],selectPeptide['appendChild'](_0x29b3e9);}),dialog[_0x5d22ba(0xea)]();}),cancelDialogBtn['addEventListener'](_0x577797(0xfa),()=>{dialog['close']();});function getAllCutPositions(_0x3f33a3,_0x1f5028){const _0x2b5336=_0x577797,_0x1735d2=[],_0x5d6e38=_0x3f33a3[_0x2b5336(0x132)];for(let _0x38779f=0x0;_0x38779f<_0x5d6e38-0x1;_0x38779f++){const _0x5b41b6=_0x3f33a3[_0x38779f],_0x2ed0f8=_0x3f33a3[_0x38779f+0x1];let _0x1966bb=![];switch(_0x1f5028){case _0x2b5336(0x130):if(['K','R']['includes'](_0x5b41b6))_0x1966bb=!![];break;case _0x2b5336(0x135):if(['F','W','Y'][_0x2b5336(0x107)](_0x5b41b6))_0x1966bb=!![];break;case'elastase':if(['A','G','S','V'][_0x2b5336(0x107)](_0x5b41b6))_0x1966bb=!![];break;case'v8':if(['D','E'][_0x2b5336(0x107)](_0x5b41b6))_0x1966bb=!![];break;case _0x2b5336(0xde):if(['F','I','M','V','W','Y']['includes'](_0x2ed0f8))_0x1966bb=!![];break;case _0x2b5336(0xf4):if(['F','L','W','Y'][_0x2b5336(0x107)](_0x2ed0f8))_0x1966bb=!![];break;}if(_0x1966bb)_0x1735d2['push'](_0x38779f+0x1);}return _0x1735d2;}function simulateCleavage(_0x51b72e,_0x45e218){const _0x5067f5=_0x577797,_0x38ca48=getAllCutPositions(_0x51b72e,_0x45e218);if(_0x38ca48[_0x5067f5(0x132)]===0x0)return{'success':![],'reason':_0x5067f5(0x10e)};const _0x2db4a4=new Set(),_0x49992d=_0x38ca48[_0x5067f5(0x132)];for(let _0x4f786f=0x1;_0x4f786f<0x1<<_0x49992d;_0x4f786f++){const _0x2ff51d=[];for(let _0x302f0d=0x0;_0x302f0d<_0x49992d;_0x302f0d++){if(_0x4f786f>>_0x302f0d&0x1)_0x2ff51d['push'](_0x38ca48[_0x302f0d]);}const _0x2cb928=[];let _0xcff508=0x0;for(const _0x240dea of _0x2ff51d){_0x2cb928[_0x5067f5(0x126)](_0x51b72e[_0x5067f5(0x10f)](_0xcff508,_0x240dea)),_0xcff508=_0x240dea;}_0x2cb928[_0x5067f5(0x126)](_0x51b72e[_0x5067f5(0x10f)](_0xcff508)),!_0x2cb928[_0x5067f5(0xcb)](_0x4dace2=>_0x4dace2[_0x5067f5(0x132)]===0x1)&&_0x2cb928['forEach'](_0x221cdc=>_0x2db4a4['add'](_0x221cdc));}if(_0x2db4a4[_0x5067f5(0xf3)]===0x0)return{'success':![],'reason':_0x5067f5(0xe0)};const _0x1c7726=Array['from'](_0x2db4a4)['filter'](_0x21b89c=>_0x21b89c!==_0x51b72e),_0x1c98f0=_0x1c7726[_0x5067f5(0xed)](_0x2109f9=>{const _0x898297=_0x5067f5,_0x49f8c4=getAllCutPositions(_0x2109f9,_0x45e218);if(_0x49f8c4[_0x898297(0x132)]===0x0)return!![];const _0x1f315b=_0x49f8c4[_0x898297(0x132)];let _0x1b76a3=![];for(let _0x1f6c1d=0x1;_0x1f6c1d<0x1<<_0x1f315b;_0x1f6c1d++){const _0x327517=[];for(let _0x21ab08=0x0;_0x21ab08<_0x1f315b;_0x21ab08++){if(_0x1f6c1d>>_0x21ab08&0x1)_0x327517['push'](_0x49f8c4[_0x21ab08]);}const _0x33220e=[];let _0xf405fb=0x0;for(const _0x1196d9 of _0x327517){_0x33220e['push'](_0x2109f9[_0x898297(0x10f)](_0xf405fb,_0x1196d9)),_0xf405fb=_0x1196d9;}_0x33220e[_0x898297(0x126)](_0x2109f9['substring'](_0xf405fb));if(!_0x33220e[_0x898297(0xcb)](_0x3b5ea6=>_0x3b5ea6['length']===0x1)){_0x1b76a3=!![];break;}}return!_0x1b76a3;});if(_0x1c98f0[_0x5067f5(0x132)]===0x0)return{'success':![],'reason':_0x5067f5(0x110)};return{'success':!![],'fragments':_0x1c98f0};}function sendLogToGoogleForm(_0x1b345e,_0x1c9f2b,_0x51ace3){const _0x4f5540=_0x577797,_0x6989b2=new FormData();_0x6989b2[_0x4f5540(0x112)](ENTRY_STUDENT_ID,_0x1b345e),_0x6989b2[_0x4f5540(0x112)](ENTRY_COUNT,_0x1c9f2b),_0x6989b2[_0x4f5540(0x112)](ENTRY_LOG_DETAIL,_0x51ace3),fetch(FORM_URL,{'method':_0x4f5540(0x128),'mode':_0x4f5540(0xf7),'body':_0x6989b2})['then'](()=>{const _0x40d022=_0x4f5540;console[_0x40d022(0x11a)]('Log\x20successfully\x20sent\x20to\x20Google\x20Form');})[_0x4f5540(0x12f)](_0x22316a=>{const _0x2f24fe=_0x4f5540;console['error'](_0x2f24fe(0x122),_0x22316a);});}function _0x9168(){const _0x4a3d58=['label','all_monomers','entry.864028327','\x20/\x20酵素:','sequence','green',']</strong><br>\x0a\x20\x20\x20\x20対象:\x20','438120bQsupJ','innerHTML','target-composition','cancel-dialog-btn','showModal','切断不可','残基】組成:\x20<strong>','filter','className','keys','815pWpzWD',']】\x20','modal-p0-composition','size','hepsin','target-length','log-item','no-cors','未入力','selectedOptions','click','textContent','🎉\x20正解です！見事に配列を論理的に特定しました！<br>（総実験回数:\x20<strong>','div','残基)','getElementById','sort','localeCompare','fragments','<br>\x0a\x20\x20\x20\x20酵素:\x20','【実験回数上限到達】ペナルティ加算により実験回数が10回以上に達しました。\x0a無計画な解答を防ぐため、一度リセットします。\x0a※これまでの失敗ログをTAへ送信しました。手元で解法を整理してから再挑戦してください。','[P0]','FQGFKDQVTRLA','includes','text','toUpperCase','addEventListener','find','close','style','no_site','substring','no_valid_cut','code','append','</strong></li>','createElement','484461ETAwyD','pep_','</ul>','trim','<p><strong>結果:</strong>\x20切断できなかった</p><p\x20style=\x22font-size:0.85em;\x20color:#d35400;\x22>💡「切断不能」という結果も重要な手がかりです！なぜ切れないのか酵素の認識部位を班員と再確認してみましょう。</p>','log','select-enzyme',']\x20対象:','<p><strong>結果:</strong>\x20以下の断片が得られた</p><ul>','answer-input','forEach','10110730vDSuwz','(組成:','Failed\x20to\x20send\x20log:','confirm-cleave-btn','残基\x20-\x20組成:\x20','DOMContentLoaded','push','\x20断片\x20(','POST','value','\x20|\x20','[P0]\x20初期標的ペプチド\x20(','preventDefault','❌\x202回続けて不正解となりました。<br>無計画な総当たりを防ぐため、回答権がロックされました。<br>最初からやり直す場合はページを再読み込み（F5）してください。','option','catch','trypsin','select-peptide','length','map','💬\x20<strong>実験回数が残り少なくなってきました（現在:\x20','chymotrypsin','99RAQgVb','\x20->\x20','17616320sCDaGJ','submit-answer-btn','student-id-input','/10回）:</strong>\x20無計画な酵素反応は避け、一度紙とペンで現在確定している部位を整理してみましょう。迷ったら遠慮なくTAにヒントを求めてみてください！','answer-result','entry.1441535192','<br>\x0a\x20\x20\x20\x20','disabled','some','7747WRHFhP','join','color','focus','残基】一次構造:\x20<strong>','history-log','❌\x20不正解です。ペナルティとして<strong>実験回数が\x20+2\x20加算</strong>されました（現在の総実験回数:\x20<strong>','\x0a\x20\x20','red','回目(ペナルティ+2加算):\x20推測配列[','【10回上限到達により失敗】\x20','4294782FrKsGd','班番号・代表者氏名を入力してください。','178ouFYzu','prepend','【実験回数上限】実験回数が10回に達しました。\x0a無計画な実験を防ぐため、一度リセットします。\x0a※これまでの失敗ログをTAへ送信しました。手元で解法や論理を整理してから再挑戦してください！','open-cleave-dialog-btn','10628NzERUR','thermolysin'];_0x9168=function(){return _0x4a3d58;};return _0x9168();}document[_0x577797(0xff)](_0x577797(0x123))['addEventListener']('click',_0x3e95e3=>{const _0x127a84=_0x577797;_0x3e95e3[_0x127a84(0x12c)]();const _0x12ae2d=document['getElementById']('student-id-input'),_0x1338be=_0x12ae2d?_0x12ae2d[_0x127a84(0x129)][_0x127a84(0x118)]():_0x127a84(0xf8),_0x2a6978=selectPeptide[_0x127a84(0x129)],_0x5350cc=document[_0x127a84(0xff)](_0x127a84(0x11b))[_0x127a84(0x129)],_0x39121d=document[_0x127a84(0xff)](_0x127a84(0x11b))[_0x127a84(0xf9)][0x0][_0x127a84(0x108)],_0x23c8ec=availablePeptides[_0x127a84(0x10b)](_0x47222a=>_0x47222a['id']===_0x2a6978);if(!_0x23c8ec)return;experimentCount++;const _0x235ca7=simulateCleavage(_0x23c8ec[_0x127a84(0xe3)],_0x5350cc);let _0x5eb31c='',_0x116c0e='[実験#'+experimentCount+_0x127a84(0x11c)+_0x23c8ec[_0x127a84(0x111)]+_0x127a84(0xe2)+_0x39121d+_0x127a84(0x137);if(!_0x235ca7['success'])_0x5eb31c=_0x127a84(0x119),_0x116c0e+=_0x127a84(0xeb);else{_0x5eb31c=_0x127a84(0x11d);const _0x107a86=[],_0x1b2229=[..._0x235ca7[_0x127a84(0x102)]]['sort']((_0x20ee4f,_0x14cac5)=>{const _0x53b485=_0x127a84,_0x2c8a78=_0x20ee4f['length'],_0x2873fc=_0x14cac5[_0x53b485(0x132)],_0x513ec3=_0x2c8a78>=0x2&&_0x2c8a78<=0x3,_0x1c4186=_0x2873fc>=0x2&&_0x2873fc<=0x3;if(_0x513ec3&&!_0x1c4186)return-0x1;if(!_0x513ec3&&_0x1c4186)return 0x1;if(_0x513ec3&&_0x1c4186)return _0x20ee4f[_0x53b485(0x101)](_0x14cac5);else{const _0x53f394=getCompositionString(_0x20ee4f),_0x4d47a7=getCompositionString(_0x14cac5);return _0x53f394[_0x53b485(0x101)](_0x4d47a7);}});_0x1b2229['forEach'](_0x42eecd=>{const _0x318207=_0x127a84,_0x2b01e0=_0x42eecd['length'];if(_0x2b01e0>=0x2&&_0x2b01e0<=0x3)_0x5eb31c+='<li>【'+_0x2b01e0+_0x318207(0xd0)+_0x42eecd+_0x318207(0x113),_0x107a86[_0x318207(0x126)](_0x42eecd+'(構造)');else{if(_0x2b01e0>=0x4){peptideCounter++;const _0x177280='[P'+peptideCounter+']',_0x487487=getCompositionString(_0x42eecd);_0x5eb31c+='<li><strong>'+_0x177280+'</strong>\x20【'+_0x2b01e0+_0x318207(0xec)+_0x487487+'</strong></li>',_0x107a86[_0x318207(0x126)](_0x177280+_0x318207(0x121)+_0x487487+')'),availablePeptides['push']({'id':_0x318207(0x116)+peptideCounter,'code':_0x177280,'sequence':_0x42eecd,'label':_0x177280+_0x318207(0x127)+_0x2b01e0+_0x318207(0x124)+_0x487487+')'});}}}),_0x5eb31c+=_0x127a84(0x117),_0x116c0e+=_0x107a86[_0x127a84(0xcd)](',\x20');}actionLogs[_0x127a84(0x126)](_0x116c0e);const _0x33cc6b=document[_0x127a84(0xff)]('general-advice');_0x33cc6b&&(experimentCount>=0x7&&(_0x33cc6b[_0x127a84(0xe7)]=_0x127a84(0x134)+experimentCount+_0x127a84(0xc6)));const _0x30f262=document['getElementById'](_0x127a84(0xd1));if(experimentCount===0x1)_0x30f262[_0x127a84(0xe7)]='';const _0x26f8e5=document[_0x127a84(0x114)](_0x127a84(0xfd));_0x26f8e5[_0x127a84(0xee)]=_0x127a84(0xf6),_0x26f8e5[_0x127a84(0xe7)]='\x0a\x20\x20\x20\x20<strong>[実験\x20#'+experimentCount+_0x127a84(0xe5)+_0x23c8ec[_0x127a84(0xdf)]+_0x127a84(0x103)+_0x39121d+_0x127a84(0xc9)+_0x5eb31c+_0x127a84(0xd3),_0x30f262[_0x127a84(0xda)](_0x26f8e5),dialog[_0x127a84(0x10c)]();if(experimentCount>=0xa){alert(_0x127a84(0xdb));const _0x2c6e77=_0x127a84(0xd6)+actionLogs['join']('\x20|\x20');sendLogToGoogleForm(_0x1338be,experimentCount,_0x2c6e77),initGame();}}),document[_0x577797(0xff)]('submit-answer-btn')[_0x577797(0x10a)](_0x577797(0xfa),()=>{const _0x3708ab=_0x577797,_0x167af6=document[_0x3708ab(0xff)](_0x3708ab(0x13a)),_0x305fe9=_0x167af6?_0x167af6['value'][_0x3708ab(0x118)]():'',_0x4d9423=document[_0x3708ab(0xff)](_0x3708ab(0x11e))[_0x3708ab(0x129)][_0x3708ab(0x118)]()[_0x3708ab(0x109)](),_0x488746=document[_0x3708ab(0xff)](_0x3708ab(0xc7));if(!_0x305fe9){alert(_0x3708ab(0xd8));if(_0x167af6)_0x167af6[_0x3708ab(0xcf)]();return;}if(!_0x4d9423){alert('推測した配列を入力してください。');return;}if(_0x4d9423===targetSequence){_0x488746[_0x3708ab(0x10d)][_0x3708ab(0xce)]=_0x3708ab(0xe4),_0x488746['innerHTML']=_0x3708ab(0xfc)+experimentCount+'回</strong>）<br><small\x20style=\x22color:#555;\x22>※実験ログをTAへ自動送信しました。</small>';const _0xf4e290='【正解クリア】\x20'+actionLogs['join'](_0x3708ab(0x12a));sendLogToGoogleForm(_0x305fe9,experimentCount,_0xf4e290),document[_0x3708ab(0xff)](_0x3708ab(0x139))[_0x3708ab(0xca)]=!![],document['getElementById']('open-cleave-dialog-btn')[_0x3708ab(0xca)]=!![];}else{wrongAnswerCount++,experimentCount+=0x2;const _0xfaf3f7='【誤答\x20#'+wrongAnswerCount+_0x3708ab(0xd5)+_0x4d9423+_0x3708ab(0xf1)+actionLogs[_0x3708ab(0xcd)](_0x3708ab(0x12a));sendLogToGoogleForm(_0x305fe9,experimentCount,_0xfaf3f7),wrongAnswerCount===0x1?(_0x488746['style'][_0x3708ab(0xce)]=_0x3708ab(0xd4),_0x488746['innerHTML']=_0x3708ab(0xd2)+experimentCount+'回</strong>）。<br>誤答ログを送信しました。<br>⚠️\x20<strong>回答チャンスは残り【1回】です！</strong>ヤマ勘で押さず、一度班員やTAと推論プロセスをダブルチェックしてから最終回答してください。',experimentCount>=0xa&&(alert(_0x3708ab(0x104)),initGame())):(_0x488746[_0x3708ab(0x10d)][_0x3708ab(0xce)]=_0x3708ab(0xd4),_0x488746[_0x3708ab(0xe7)]=_0x3708ab(0x12d),document[_0x3708ab(0xff)](_0x3708ab(0x139))[_0x3708ab(0xca)]=!![],document['getElementById']('open-cleave-dialog-btn')[_0x3708ab(0xca)]=!![]);}});
+// --- プロリン(P)を除いた19種類の天然アミノ酸 ---
+const AMINO_ACIDS = ["A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "Q", "R", "S", "T", "V", "W", "Y"];
+
+let targetSequence = "";
+let peptideCounter = 0;
+let availablePeptides = [];
+let experimentCount = 0;
+let actionLogs = [];
+let wrongAnswerCount = 0;
+let currentLang = "ja"; // 現在の言語設定 ('ja' または 'en')
+
+// --- Google フォームの設定 ---
+const FORM_URL = "https://docs.google.com/forms/d/1CjkXITqSBwcBjhyIkuNuf4_eqqPed7NghJPAoAcAx6I/formResponse";
+const ENTRY_STUDENT_ID = "entry.864028327";  // 質問1: 班番号・代表者氏名
+const ENTRY_COUNT      = "entry.1441535192"; // 質問2: 総実験回数
+const ENTRY_LOG_DETAIL = "entry.1640624802"; // 質問3: 実験ログ詳細
+
+// --- 多言語テキスト辞書 ---
+const I18N = {
+  ja: {
+    title: "🧪 アミノ酸配列推定パズル",
+    langBtn: "🌐 English",
+    sec1Title: "1. プレイヤー情報",
+    sec1Label: "班番号・代表者氏名（必須）:",
+    sec1Placeholder: "例: 3班 (名大 太郎・名大 花子)",
+    sec1Sub: "※実験を開始・提出するために必要です。",
+    sec2Title: "2. 初期標的ペプチド [P0]",
+    sec2LenLabel: "ペプチド長:",
+    sec2Unit: "残基",
+    sec2CompLabel: "全体のアミノ酸組成:",
+    sec3Title: "3. 酵素切断シミュレーション",
+    cleaveBtn: "🧪 酵素を切断・反応させる",
+    adviceInit: "💡 <strong>ヒント:</strong> 班員で役割分担（ノート記録・酵素の認識部位確認など）を行い、実験結果が得られるたびに「どの位置が確定したか」を議論しながら進めましょう！迷ったらTAにも相談してください。",
+    adviceWarning: "💬 <strong>実験回数が残り少なくなってきました（現在: {count}/10回）:</strong> 無計画な酵素反応は避け、一度紙とペンで現在確定している部位を整理してみましょう。迷ったら遠慮なくTAにヒントを求めてみてください！",
+    logTitle: "実験履歴 (ログ)",
+    noLog: "まだ実験履歴はありません。",
+    sec4Title: "4. 配列推測の解答提出",
+    sec4Desc: "特定した12残基のアミノ酸配列を1文字表記の英大文字で入力してください。",
+    submitBtn: "正解判定＆提出",
+    modalTitle: "🧪 酵素反応の設定",
+    modalP0Label: "[P0] 全体のアミノ酸組成:",
+    modalPepLabel: "対象ペプチドを選択:",
+    modalEnzLabel: "使用する消化酵素を選択:",
+    cancelBtn: "キャンセル",
+    runBtn: "実験実行",
+    
+    // アラート & 動的メッセージ
+    alertNoId: "実験を開始する前に、まず「班番号・代表者氏名」を入力してください。",
+    alertNoAnsId: "班番号・代表者氏名を入力してください。",
+    alertNoAns: "推測した配列を入力してください。",
+    resNoCut: "<p><strong>結果:</strong> 切断できなかった</p><p style=\"font-size:0.85em; color:#d35400;\">💡「切断不能」という結果も重要な手がかりです！なぜ切れないのか酵素の認識部位を班員と再確認してみましょう。</p>",
+    resFragsHeader: "<p><strong>結果:</strong> 以下の断片が得られた</p><ul>",
+    labelResLen: "残基",
+    labelStructure: "一次構造",
+    labelComposition: "組成",
+    alertLimit: "【実験回数上限】実験回数が10回に達しました。\n無計画な実験を防ぐため、一度リセットします。\n※これまでの失敗ログをTAへ送信しました。手元で解法や論理を整理してから再挑戦してください！",
+    resSuccess: "🎉 正解です！見事に配列を論理的に特定しました！<br>（総実験回数: <strong>{count}回</strong>）<br><small style=\"color:#555;\">※実験ログをTAへ自動送信しました。</small>",
+    resWrong1: "❌ 不正解です。ペナルティとして<strong>実験回数が +2 加算</strong>されました（現在の総実験回数: <strong>{count}回</strong>）。<br>誤答ログを送信しました。<br>⚠️ <strong>回答チャンスは残り【1回】です！</strong>ヤマ勘で押さず、一度班員やTAと推論プロセスをダブルチェックしてから最終回答してください。",
+    resWrong2: "❌ 2回続けて不正解となりました。<br>無計画な総当たりを防ぐため、回答権がロックされました。<br>最初からやり直す場合はページを再読み込み（F5）してください。",
+    
+    // 酵素選択肢の英語/日本語
+    enzTrypsin: "トリプシン (Trypsin) - K, R のC末端",
+    enzChymo: "キモトリプシン (Chymotrypsin) - F, W, Y のC末端",
+    enzElastase: "エラスターゼ (Elastase) - A, G, S, V のC末端",
+    enzV8: "V8プロテアーゼ (Staphylococcal protease) - D, E のC末端",
+    enzThermo: "サーモリシン (Thermolysin) - F, I, M, V, W, Y のN末端",
+    enzHepsin: "ヘプシン (Hepsin) - F, L, W, Y のN末端"
+  },
+  en: {
+    title: "🧪 Amino Acid Sequence Estimation Puzzle",
+    langBtn: "🌐 日本語",
+    sec1Title: "1. Player Information",
+    sec1Label: "Group No. & Representative Name (Required):",
+    sec1Placeholder: "e.g., Group 3 (John, Mary)",
+    sec1Sub: "*Required to start experiments and submit answers.",
+    sec2Title: "2. Initial Target Peptide [P0]",
+    sec2LenLabel: "Peptide Length:",
+    sec2Unit: "residues",
+    sec2CompLabel: "Overall Amino Acid Composition:",
+    sec3Title: "3. Enzyme Cleavage Simulation",
+    cleaveBtn: "🧪 Cleave / React with Enzyme",
+    adviceInit: "💡 <strong>Hint:</strong> Divide roles among group members (taking notes, checking enzyme recognition sites, etc.) and discuss 'which positions are confirmed' after each result! Feel free to ask the TA if you get stuck.",
+    adviceWarning: "💬 <strong>Few experiment attempts remaining (Current: {count}/10):</strong> Avoid random attempts. Organize the confirmed sequence on paper with your team, or consult the TA!",
+    logTitle: "Experiment History (Logs)",
+    noLog: "No experiment history yet.",
+    sec4Title: "4. Answer Submission",
+    sec4Desc: "Enter the identified 12-residue amino acid sequence in single-letter uppercase codes.",
+    submitBtn: "Submit Answer",
+    modalTitle: "🧪 Enzyme Cleavage Settings",
+    modalP0Label: "[P0] Overall Composition:",
+    modalPepLabel: "Select Target Peptide:",
+    modalEnzLabel: "Select Proteolytic Enzyme:",
+    cancelBtn: "Cancel",
+    runBtn: "Run Experiment",
+    
+    // Alerts & Dynamic Messages
+    alertNoId: "Please enter your Group No. & Name before starting.",
+    alertNoAnsId: "Please enter your Group No. & Name.",
+    alertNoAns: "Please enter your guessed sequence.",
+    resNoCut: "<p><strong>Result:</strong> Could not be cleaved</p><p style=\"font-size:0.85em; color:#d35400;\">💡 'No cleavage' is also crucial evidence! Recheck the cleavage sites with your team.</p>",
+    resFragsHeader: "<p><strong>Result:</strong> Obtained the following fragments</p><ul>",
+    labelResLen: "residues",
+    labelStructure: "Primary Structure",
+    labelComposition: "Composition",
+    alertLimit: "[Limit Reached] You reached the 10-experiment limit.\nThe game will reset to prevent random guessing.\n*Failure logs have been sent to the TA. Re-organize your logic before trying again!",
+    resSuccess: "🎉 Correct! You successfully identified the sequence!<br>(Total Experiments: <strong>{count}</strong>)<br><small style=\"color:#555;\">*Logs automatically sent to TA.</small>",
+    resWrong1: "❌ Incorrect. Penalty applied: <strong>+2 added to experiment count</strong> (Current Total: <strong>{count}</strong>).<br>Error log sent.<br>⚠️ <strong>Only [1] attempt remaining!</strong> Double-check your logic with your team or TA before submitting again.",
+    resWrong2: "❌ Incorrect on 2 consecutive attempts.<br>Answer submission locked to prevent random guessing.<br>Reload the page (F5) if you wish to start over from the beginning.",
+    
+    // Enzyme Options
+    enzTrypsin: "Trypsin - C-term of K, R",
+    enzChymo: "Chymotrypsin - C-term of F, W, Y",
+    enzElastase: "Elastase - C-term of A, G, S, V",
+    enzV8: "V8 Protease - C-term of D, E",
+    enzThermo: "Thermolysin - N-term of F, I, M, V, W, Y",
+    enzHepsin: "Hepsin - N-term of F, L, W, Y"
+  }
+};
+
+// UI文言の表示更新
+function updateUiText() {
+  const t = I18N[currentLang];
+  document.getElementById("ui-title").textContent = t.title;
+  document.getElementById("lang-toggle-btn").textContent = t.langBtn;
+  document.getElementById("ui-sec1-title").textContent = t.sec1Title;
+  document.getElementById("ui-sec1-label").textContent = t.sec1Label;
+  document.getElementById("student-id-input").placeholder = t.sec1Placeholder;
+  document.getElementById("ui-sec1-sub").textContent = t.sec1Sub;
+  document.getElementById("ui-sec2-title").textContent = t.sec2Title;
+  document.getElementById("ui-sec2-len-label").textContent = t.sec2LenLabel;
+  document.getElementById("ui-sec2-unit").textContent = t.sec2Unit;
+  document.getElementById("ui-sec2-comp-label").textContent = t.sec2CompLabel;
+  document.getElementById("ui-sec3-title").textContent = t.sec3Title;
+  document.getElementById("open-cleave-dialog-btn").textContent = t.cleaveBtn;
+  document.getElementById("ui-sec3-log-title").textContent = t.logTitle;
+  document.getElementById("ui-sec4-title").textContent = t.sec4Title;
+  document.getElementById("ui-sec4-desc").textContent = t.sec4Desc;
+  document.getElementById("submit-answer-btn").textContent = t.submitBtn;
+  document.getElementById("ui-modal-title").textContent = t.modalTitle;
+  document.getElementById("ui-modal-p0-label").textContent = t.modalP0Label;
+  document.getElementById("ui-modal-pep-label").textContent = t.modalPepLabel;
+  document.getElementById("ui-modal-enz-label").textContent = t.modalEnzLabel;
+  document.getElementById("cancel-dialog-btn").textContent = t.cancelBtn;
+  document.getElementById("confirm-cleave-btn").textContent = t.runBtn;
+
+  // 酵素選択肢の更新
+  const enzSelect = document.getElementById("select-enzyme");
+  if (enzSelect) {
+    enzSelect.options[0].text = t.enzTrypsin;
+    enzSelect.options[1].text = t.enzChymo;
+    enzSelect.options[2].text = t.enzElastase;
+    enzSelect.options[3].text = t.enzV8;
+    enzSelect.options[4].text = t.enzThermo;
+    enzSelect.options[5].text = t.enzHepsin;
+  }
+}
+
+// ゲーム初期化
+function initGame() {
+  targetSequence = "FQGFKDQVTRLA";
+  peptideCounter = 0;
+  experimentCount = 0;
+  wrongAnswerCount = 0;
+  actionLogs = [];
+
+  availablePeptides = [
+    { id: "p_0", code: "[P0]", sequence: targetSequence, label: `[P0] Initial Target Peptide (${targetSequence.length} residues)` }
+  ];
+
+  const submitBtn = document.getElementById("submit-answer-btn");
+  const cleaveBtn = document.getElementById("open-cleave-dialog-btn");
+  if (submitBtn) submitBtn.disabled = false;
+  if (cleaveBtn) cleaveBtn.disabled = false;
+
+  const targetCompStr = getCompositionString(targetSequence);
+
+  document.getElementById("target-length").textContent = targetSequence.length;
+  document.getElementById("target-composition").textContent = targetCompStr;
+  
+  const modalCompElem = document.getElementById("modal-p0-composition");
+  if (modalCompElem) modalCompElem.textContent = targetCompStr;
+
+  const t = I18N[currentLang];
+  document.getElementById("history-log").innerHTML = `<p style="color: #666;">${t.noLog}</p>`;
+  document.getElementById("general-advice").innerHTML = t.adviceInit;
+  document.getElementById("answer-input").value = "";
+  document.getElementById("answer-result").textContent = "";
+
+  updateUiText();
+}
+
+function getCompositionString(seq) {
+  const counts = {};
+  for (const aa of seq) {
+    counts[aa] = (counts[aa] || 0) + 1;
+  }
+  return Object.keys(counts).sort().map(aa => `${aa}:${counts[aa]}`).join(", ");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initGame();
+
+  // 言語切替ボタン
+  document.getElementById("lang-toggle-btn").addEventListener("click", () => {
+    currentLang = (currentLang === "ja") ? "en" : "ja";
+    updateUiText();
+  });
+});
+
+const dialog = document.getElementById("cleave-dialog");
+const openDialogBtn = document.getElementById("open-cleave-dialog-btn");
+const cancelDialogBtn = document.getElementById("cancel-dialog-btn");
+const selectPeptide = document.getElementById("select-peptide");
+
+openDialogBtn.addEventListener("click", () => {
+  const studentIdInput = document.getElementById("student-id-input");
+  const t = I18N[currentLang];
+
+  if (!studentIdInput || !studentIdInput.value.trim()) {
+    alert(t.alertNoId);
+    if (studentIdInput) studentIdInput.focus();
+    return;
+  }
+
+  selectPeptide.innerHTML = "";
+  availablePeptides.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = p.label;
+    selectPeptide.appendChild(opt);
+  });
+  dialog.showModal();
+});
+
+cancelDialogBtn.addEventListener("click", () => {
+  dialog.close();
+});
+
+function getAllCutPositions(seq, enzyme) {
+  const cuts = [];
+  const len = seq.length;
+
+  for (let i = 0; i < len - 1; i++) {
+    const current = seq[i];
+    const next = seq[i + 1];
+    let isCut = false;
+
+    switch (enzyme) {
+      case "trypsin": if (["K", "R"].includes(current)) isCut = true; break;
+      case "chymotrypsin": if (["F", "W", "Y"].includes(current)) isCut = true; break;
+      case "elastase": if (["A", "G", "S", "V"].includes(current)) isCut = true; break;
+      case "v8": if (["D", "E"].includes(current)) isCut = true; break;
+      case "thermolysin": if (["F", "I", "M", "V", "W", "Y"].includes(next)) isCut = true; break;
+      case "hepsin": if (["F", "L", "W", "Y"].includes(next)) isCut = true; break;
+    }
+    if (isCut) cuts.push(i + 1);
+  }
+  return cuts;
+}
+
+function simulateCleavage(seq, enzyme) {
+  const possibleCuts = getAllCutPositions(seq, enzyme);
+  if (possibleCuts.length === 0) return { success: false, reason: "no_site" };
+
+  const validFragmentsSet = new Set();
+  const n = possibleCuts.length;
+
+  for (let mask = 1; mask < (1 << n); mask++) {
+    const activeCuts = [];
+    for (let i = 0; i < n; i++) {
+      if ((mask >> i) & 1) activeCuts.push(possibleCuts[i]);
+    }
+
+    const fragments = [];
+    let start = 0;
+    for (const pos of activeCuts) {
+      fragments.push(seq.substring(start, pos));
+      start = pos;
+    }
+    fragments.push(seq.substring(start));
+
+    if (!fragments.some(f => f.length === 1)) {
+      fragments.forEach(f => validFragmentsSet.add(f));
+    }
+  }
+
+  if (validFragmentsSet.size === 0) return { success: false, reason: "all_monomers" };
+
+  const allValidFragments = Array.from(validFragmentsSet).filter(f => f !== seq);
+
+  const finalFragments = allValidFragments.filter(subSeq => {
+    const subCuts = getAllCutPositions(subSeq, enzyme);
+    if (subCuts.length === 0) return true;
+
+    const subN = subCuts.length;
+    let canBeCleavedFurther = false;
+
+    for (let mask = 1; mask < (1 << subN); mask++) {
+      const activeCuts = [];
+      for (let i = 0; i < subN; i++) {
+        if ((mask >> i) & 1) activeCuts.push(subCuts[i]);
+      }
+
+      const frags = [];
+      let start = 0;
+      for (const pos of activeCuts) {
+        frags.push(subSeq.substring(start, pos));
+        start = pos;
+      }
+      frags.push(subSeq.substring(start));
+
+      if (!frags.some(f => f.length === 1)) {
+        canBeCleavedFurther = true;
+        break;
+      }
+    }
+    return !canBeCleavedFurther;
+  });
+
+  if (finalFragments.length === 0) return { success: false, reason: "no_valid_cut" };
+
+  return { success: true, fragments: finalFragments };
+}
+
+// ★ Google フォームへは【日本語統一ログ】で送信 (パターンA遵守)
+function sendLogToGoogleForm(studentId, totalCount, logDetails) {
+  const formData = new FormData();
+  formData.append(ENTRY_STUDENT_ID, studentId);
+  formData.append(ENTRY_COUNT, totalCount);
+  formData.append(ENTRY_LOG_DETAIL, logDetails);
+
+  fetch(FORM_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: formData
+  }).then(() => {
+    console.log("Log successfully sent to Google Form");
+  }).catch(err => {
+    console.error("Failed to send log:", err);
+  });
+}
+
+// 実験実行イベント
+document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const studentIdInput = document.getElementById("student-id-input");
+  const studentId = studentIdInput ? studentIdInput.value.trim() : "未入力";
+
+  const selectedPeptideId = selectPeptide.value;
+  const enzyme = document.getElementById("select-enzyme").value;
+  const enzymeNameJa = document.getElementById("select-enzyme").selectedOptions[0].text;
+
+  const targetObj = availablePeptides.find(p => p.id === selectedPeptideId);
+  if (!targetObj) return;
+
+  experimentCount++;
+  const res = simulateCleavage(targetObj.sequence, enzyme);
+  const t = I18N[currentLang];
+
+  let resultHtml = "";
+  // フォーム用ログ（日本語固定）
+  let logText = `[実験#${experimentCount}] 対象:${targetObj.code} / 酵素:${enzyme} -> `;
+
+  if (!res.success) {
+    resultHtml = t.resNoCut;
+    logText += "切断不可";
+  } else {
+    resultHtml = t.resFragsHeader;
+    const generatedFrags = [];
+
+    // ソート処理（1: 構造確定優先, 2: アルファベット順）
+    const sortedFragments = [...res.fragments].sort((a, b) => {
+      const lenA = a.length;
+      const lenB = b.length;
+      const isStructA = (lenA >= 2 && lenA <= 3);
+      const isStructB = (lenB >= 2 && lenB <= 3);
+
+      if (isStructA && !isStructB) return -1;
+      if (!isStructA && isStructB) return 1;
+
+      if (isStructA && isStructB) {
+        return a.localeCompare(b);
+      } else {
+        const compA = getCompositionString(a);
+        const compB = getCompositionString(b);
+        return compA.localeCompare(compB);
+      }
+    });
+
+    sortedFragments.forEach(frag => {
+      const len = frag.length;
+      if (len >= 2 && len <= 3) {
+        resultHtml += `<li>【${len}${t.labelResLen}】${t.labelStructure}: <strong>${frag}</strong></li>`;
+        generatedFrags.push(`${frag}(構造)`);
+      } else if (len >= 4) {
+        peptideCounter++;
+        const pCode = `[P${peptideCounter}]`;
+        const comp = getCompositionString(frag);
+        
+        resultHtml += `<li><strong>${pCode}</strong> 【${len}${t.labelResLen}】${t.labelComposition}: <strong>${comp}</strong></li>`;
+        generatedFrags.push(`${pCode}(組成:${comp})`);
+
+        availablePeptides.push({
+          id: `pep_${peptideCounter}`,
+          code: pCode,
+          sequence: frag,
+          label: `${pCode} Fragment (${len} res - Comp: ${comp})`
+        });
+      }
+    });
+    resultHtml += `</ul>`;
+    logText += generatedFrags.join(", ");
+  }
+
+  actionLogs.push(logText);
+
+  // アドバイス更新
+  const adviceElem = document.getElementById("general-advice");
+  if (adviceElem && experimentCount >= 7) {
+    adviceElem.innerHTML = t.adviceWarning.replace("{count}", experimentCount);
+  }
+
+  const logBox = document.getElementById("history-log");
+  if (experimentCount === 1) logBox.innerHTML = "";
+
+  const item = document.createElement("div");
+  item.className = "log-item";
+  item.innerHTML = `
+    <strong>[Exp #${experimentCount}]</strong><br>
+    Target: ${targetObj.code}<br>
+    Enzyme: ${enzymeNameJa}<br>
+    ${resultHtml}
+  `;
+  logBox.prepend(item);
+
+  dialog.close();
+
+  // 10回上限チェック
+  if (experimentCount >= 10) {
+    alert(t.alertLimit);
+    const failLogSummary = "【10回上限到達により失敗】 " + actionLogs.join(" | ");
+    sendLogToGoogleForm(studentId, experimentCount, failLogSummary);
+    initGame();
+  }
+});
+
+// 解答判定 & ログ送信
+document.getElementById("submit-answer-btn").addEventListener("click", () => {
+  const studentIdInput = document.getElementById("student-id-input");
+  const studentId = studentIdInput ? studentIdInput.value.trim() : "";
+  const userAns = document.getElementById("answer-input").value.trim().toUpperCase();
+  const resElem = document.getElementById("answer-result");
+  const t = I18N[currentLang];
+
+  if (!studentId) {
+    alert(t.alertNoAnsId);
+    if (studentIdInput) studentIdInput.focus();
+    return;
+  }
+
+  if (!userAns) {
+    alert(t.alertNoAns);
+    return;
+  }
+
+  if (userAns === targetSequence) {
+    resElem.style.color = "green";
+    resElem.innerHTML = t.resSuccess.replace("{count}", experimentCount);
+    
+    const logSummary = "【正解クリア】 " + actionLogs.join(" | ");
+    sendLogToGoogleForm(studentId, experimentCount, logSummary);
+
+    document.getElementById("submit-answer-btn").disabled = true;
+    document.getElementById("open-cleave-dialog-btn").disabled = true;
+
+  } else {
+    wrongAnswerCount++;
+    experimentCount += 2; // ペナルティ+2
+
+    const failAnsSummary = `【誤答 #${wrongAnswerCount}回目(ペナルティ+2加算): 推測配列[${userAns}]】 ` + actionLogs.join(" | ");
+    sendLogToGoogleForm(studentId, experimentCount, failAnsSummary);
+
+    if (wrongAnswerCount === 1) {
+      resElem.style.color = "red";
+      resElem.innerHTML = t.resWrong1.replace("{count}", experimentCount);
+
+      if (experimentCount >= 10) {
+        alert(t.alertLimit);
+        initGame();
+      }
+
+    } else {
+      resElem.style.color = "red";
+      resElem.innerHTML = t.resWrong2;
+
+      document.getElementById("submit-answer-btn").disabled = true;
+      document.getElementById("open-cleave-dialog-btn").disabled = true;
+    }
+  }
+});

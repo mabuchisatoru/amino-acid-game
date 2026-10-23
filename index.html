@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>アミノ酸配列推定パズル</title>
+  <title>アミノ酸配列推定パズル / Amino Acid Sequence Puzzle</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -13,8 +13,15 @@
       background-color: #f8f9fa;
       color: #333;
     }
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
     h1, h2, h3 {
       color: #2c3e50;
+      margin: 0;
     }
     .card {
       background: white;
@@ -53,6 +60,11 @@
       background-color: #bdc3c7;
       cursor: not-allowed;
     }
+    .lang-btn {
+      background-color: #7f8c8d;
+      font-size: 0.85em;
+      padding: 6px 12px;
+    }
     input[type="text"], select {
       width: 100%;
       padding: 8px 12px;
@@ -80,35 +92,38 @@
 </head>
 <body>
 
-  <h1>🧪 アミノ酸配列推定パズル</h1>
+  <div class="header-bar">
+    <h1 id="ui-title">🧪 アミノ酸配列推定パズル</h1>
+    <button id="lang-toggle-btn" class="lang-btn">🌐 English</button>
+  </div>
 
   <!-- 1. 班情報入力エリア -->
   <div class="card">
-    <h2>1. プレイヤー情報</h2>
-    <label for="student-id-input"><strong>班番号・代表者氏名（必須）:</strong></label>
-    <input type="text" id="student-id-input" placeholder="例: 3班 (名大 太郎・名大 花子)">
-    <small style="color: #666;">※実験を開始・提出するために必要です。</small>
+    <h2 id="ui-sec1-title">1. プレイヤー情報</h2>
+    <label for="student-id-input"><strong id="ui-sec1-label">班番号・代表者氏名（必須）:</strong></label>
+    <input type="text" id="student-id-input" placeholder="例: 3班 (名大 太郎・名大 花子) / Group 3 (John, Mary)">
+    <small id="ui-sec1-sub" style="color: #666;">※実験を開始・提出するために必要です。</small>
   </div>
 
   <!-- 2. 初期標的ペプチド情報 -->
   <div class="card">
-    <h2>2. 初期標的ペプチド [P0]</h2>
+    <h2 id="ui-sec2-title">2. 初期標的ペプチド [P0]</h2>
     <div class="info-box">
-      <p><strong>ペプチド長:</strong> <span id="target-length">-</span> 残基</p>
-      <p><strong>全体のアミノ酸組成:</strong> <span id="target-composition">-</span></p>
+      <p><strong id="ui-sec2-len-label">ペプチド長:</strong> <span id="target-length">-</span> <span id="ui-sec2-unit">残基</span></p>
+      <p><strong id="ui-sec2-comp-label">全体のアミノ酸組成:</strong> <span id="target-composition">-</span></p>
     </div>
   </div>
 
   <!-- 3. 実験実行ボタン＆履歴 -->
   <div class="card">
-    <h2>3. 酵素切断シミュレーション</h2>
+    <h2 id="ui-sec3-title">3. 酵素切断シミュレーション</h2>
     <button id="open-cleave-dialog-btn">🧪 酵素を切断・反応させる</button>
 
     <div class="advice-box" id="general-advice">
       💡 <strong>ヒント:</strong> 班員で役割分担（ノート記録・酵素の認識部位確認など）を行い、実験結果が得られるたびに「どの位置が確定したか」を議論しながら進めましょう！迷ったらTAにも相談してください。
     </div>
 
-    <h3>実験履歴 (ログ)</h3>
+    <h3 id="ui-sec3-log-title">実験履歴 (ログ)</h3>
     <div id="history-log">
       <p style="color: #666;">まだ実験履歴はありません。</p>
     </div>
@@ -116,9 +131,9 @@
 
   <!-- 4. 解答入力エリア -->
   <div class="card">
-    <h2>4. 配列推測の解答提出</h2>
-    <p>特定した12残基のアミノ酸配列を1文字表記の英大文字で入力してください。</p>
-    <input type="text" id="answer-input" placeholder="例: ACAADFGYAA" style="font-size: 1.1em; letter-spacing: 2px;">
+    <h2 id="ui-sec4-title">4. 配列推測の解答提出</h2>
+    <p id="ui-sec4-desc">特定した12残基のアミノ酸配列を1文字表記の英大文字で入力してください。</p>
+    <input type="text" id="answer-input" placeholder="e.g. FQGFKDQVTRLA" style="font-size: 1.1em; letter-spacing: 2px;">
     <button id="submit-answer-btn" style="background-color: #2ecc71;">正解判定＆提出</button>
     <div id="answer-result" style="margin-top: 15px;"></div>
   </div>
@@ -126,21 +141,21 @@
   <!-- 酵素選択ダイアログ (モーダル) -->
   <dialog id="cleave-dialog">
     <form method="dialog">
-      <h3 style="margin-top: 0;">🧪 酵素反応の設定</h3>
+      <h3 id="ui-modal-title" style="margin-top: 0;">🧪 酵素反応の設定</h3>
       
       <!-- P0組成の常時参照パネル -->
       <div style="background: #eef7fc; border: 1px solid #b3e5fc; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 0.88em;">
-        <strong>[P0] 全体のアミノ酸組成:</strong><br>
+        <strong id="ui-modal-p0-label">[P0] 全体のアミノ酸組成:</strong><br>
         <span id="modal-p0-composition" style="color: #0277bd; font-weight: bold;">-</span>
       </div>
 
       <div style="margin-bottom: 15px;">
-        <label for="select-peptide"><strong>対象ペプチドを選択:</strong></label>
+        <label for="select-peptide"><strong id="ui-modal-pep-label">対象ペプチドを選択:</strong></label>
         <select id="select-peptide"></select>
       </div>
 
       <div style="margin-bottom: 15px;">
-        <label for="select-enzyme"><strong>使用する消化酵素を選択:</strong></label>
+        <label for="select-enzyme"><strong id="ui-modal-enz-label">使用する消化酵素を選択:</strong></label>
         <select id="select-enzyme">
           <option value="trypsin">トリプシン (Trypsin) - K, R のC末端</option>
           <option value="chymotrypsin">キモトリプシン (Chymotrypsin) - F, W, Y のC末端</option>
