@@ -7,7 +7,7 @@ let availablePeptides = [];
 let experimentCount = 0;
 let actionLogs = [];
 let wrongAnswerCount = 0;
-let currentLang = "ja"; // 現在の言語設定 ('ja' または 'en')
+let currentLang = "ja";
 
 // --- Google フォームの設定 ---
 const FORM_URL = "https://docs.google.com/forms/d/1CjkXITqSBwcBjhyIkuNuf4_eqqPed7NghJPAoAcAx6I/formResponse";
@@ -44,7 +44,6 @@ const I18N = {
     cancelBtn: "キャンセル",
     runBtn: "実験実行",
     
-    // アラート & 動的メッセージ
     alertNoId: "実験を開始する前に、まず「班番号・代表者氏名」を入力してください。",
     alertNoAnsId: "班番号・代表者氏名を入力してください。",
     alertNoAns: "推測した配列を入力してください。",
@@ -58,7 +57,6 @@ const I18N = {
     resWrong1: "❌ 不正解です。ペナルティとして<strong>実験回数が +2 加算</strong>されました（現在の総実験回数: <strong>{count}回</strong>）。<br>誤答ログを送信しました。<br>⚠️ <strong>回答チャンスは残り【1回】です！</strong>ヤマ勘で押さず、一度班員やTAと推論プロセスをダブルチェックしてから最終回答してください。",
     resWrong2: "❌ 2回続けて不正解となりました。<br>無計画な総当たりを防ぐため、回答権がロックされました。<br>最初からやり直す場合はページを再読み込み（F5）してください。",
     
-    // 酵素選択肢の英語/日本語
     enzTrypsin: "トリプシン (Trypsin) - K, R のC末端",
     enzChymo: "キモトリプシン (Chymotrypsin) - F, W, Y のC末端",
     enzElastase: "エラスターゼ (Elastase) - A, G, S, V のC末端",
@@ -93,7 +91,6 @@ const I18N = {
     cancelBtn: "Cancel",
     runBtn: "Run Experiment",
     
-    // Alerts & Dynamic Messages
     alertNoId: "Please enter your Group No. & Name before starting.",
     alertNoAnsId: "Please enter your Group No. & Name.",
     alertNoAns: "Please enter your guessed sequence.",
@@ -107,7 +104,6 @@ const I18N = {
     resWrong1: "❌ Incorrect. Penalty applied: <strong>+2 added to experiment count</strong> (Current Total: <strong>{count}</strong>).<br>Error log sent.<br>⚠️ <strong>Only [1] attempt remaining!</strong> Double-check your logic with your team or TA before submitting again.",
     resWrong2: "❌ Incorrect on 2 consecutive attempts.<br>Answer submission locked to prevent random guessing.<br>Reload the page (F5) if you wish to start over from the beginning.",
     
-    // Enzyme Options
     enzTrypsin: "Trypsin - C-term of K, R",
     enzChymo: "Chymotrypsin - C-term of F, W, Y",
     enzElastase: "Elastase - C-term of A, G, S, V",
@@ -142,6 +138,22 @@ function updateUiText() {
   document.getElementById("ui-modal-enz-label").textContent = t.modalEnzLabel;
   document.getElementById("cancel-dialog-btn").textContent = t.cancelBtn;
   document.getElementById("confirm-cleave-btn").textContent = t.runBtn;
+
+  // ★ ヒント文章と言語毎の初期ログの更新
+  const adviceElem = document.getElementById("general-advice");
+  if (adviceElem) {
+    if (experimentCount >= 7) {
+      adviceElem.innerHTML = t.adviceWarning.replace("{count}", experimentCount);
+    } else {
+      adviceElem.innerHTML = t.adviceInit;
+    }
+  }
+
+  // ★ 実験ログが0件の場合の「まだ履歴はありません」テキスト切り替え
+  const logBox = document.getElementById("history-log");
+  if (logBox && experimentCount === 0) {
+    logBox.innerHTML = `<p style="color: #666;">${t.noLog}</p>`;
+  }
 
   // 酵素選択肢の更新
   const enzSelect = document.getElementById("select-enzyme");
@@ -180,9 +192,6 @@ function initGame() {
   const modalCompElem = document.getElementById("modal-p0-composition");
   if (modalCompElem) modalCompElem.textContent = targetCompStr;
 
-  const t = I18N[currentLang];
-  document.getElementById("history-log").innerHTML = `<p style="color: #666;">${t.noLog}</p>`;
-  document.getElementById("general-advice").innerHTML = t.adviceInit;
   document.getElementById("answer-input").value = "";
   document.getElementById("answer-result").textContent = "";
 
@@ -322,7 +331,6 @@ function simulateCleavage(seq, enzyme) {
   return { success: true, fragments: finalFragments };
 }
 
-// ★ Google フォームへは【日本語統一ログ】で送信 (パターンA遵守)
 function sendLogToGoogleForm(studentId, totalCount, logDetails) {
   const formData = new FormData();
   formData.append(ENTRY_STUDENT_ID, studentId);
@@ -359,7 +367,6 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
   const t = I18N[currentLang];
 
   let resultHtml = "";
-  // フォーム用ログ（日本語固定）
   let logText = `[実験#${experimentCount}] 対象:${targetObj.code} / 酵素:${enzyme} -> `;
 
   if (!res.success) {
@@ -369,7 +376,6 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
     resultHtml = t.resFragsHeader;
     const generatedFrags = [];
 
-    // ソート処理（1: 構造確定優先, 2: アルファベット順）
     const sortedFragments = [...res.fragments].sort((a, b) => {
       const lenA = a.length;
       const lenB = b.length;
@@ -415,7 +421,6 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
 
   actionLogs.push(logText);
 
-  // アドバイス更新
   const adviceElem = document.getElementById("general-advice");
   if (adviceElem && experimentCount >= 7) {
     adviceElem.innerHTML = t.adviceWarning.replace("{count}", experimentCount);
@@ -436,7 +441,6 @@ document.getElementById("confirm-cleave-btn").addEventListener("click", (e) => {
 
   dialog.close();
 
-  // 10回上限チェック
   if (experimentCount >= 10) {
     alert(t.alertLimit);
     const failLogSummary = "【10回上限到達により失敗】 " + actionLogs.join(" | ");
@@ -476,7 +480,7 @@ document.getElementById("submit-answer-btn").addEventListener("click", () => {
 
   } else {
     wrongAnswerCount++;
-    experimentCount += 2; // ペナルティ+2
+    experimentCount += 2;
 
     const failAnsSummary = `【誤答 #${wrongAnswerCount}回目(ペナルティ+2加算): 推測配列[${userAns}]】 ` + actionLogs.join(" | ");
     sendLogToGoogleForm(studentId, experimentCount, failAnsSummary);
